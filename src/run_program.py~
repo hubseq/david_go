@@ -1,0 +1,5 @@
+import os, subprocess, sys
+from chartReport import chartReport
+
+if __name__ == '__main__':
+    chartReport( sys.argv[1:] )

@@ -5,8 +5,8 @@ mi_template_json = {'module_version': '00.00.00', 'program_name': 'david_go', 'p
 with open(MODULE+'.template.json','w') as fout:
     json.dump(mi_template_json, fout)
 
-io_dryrun_json = {'input': ['s3://hubseq-data/test/dnaseq_targeted/run_test1/deseq2/deseq2.test.csv'], 'output': ['s3://hubseq-data/test/dnaseq_targeted/run_test1/david_go/'],  'alternate_inputs': [], 'alternate_outputs': [], 'program_arguments': '', 'sample_id': MODULE+'_test', 'dryrun': ''}
-io_json = {'input': ['s3://hubseq-data/test/dnaseq_targeted/run_test1/deseq2/deseq2.test.csv'], 'output': ['s3://hubseq-data/test/dnaseq_targeted/run_test1/david_go/'],  'alternate_inputs': [], 'alternate_outputs': [], 'program_arguments': '', 'sample_id': MODULE+'_test'}
+io_dryrun_json = {'input': ['s3://hubseq-data/test/rnaseq/run_test1/deseq2/deseq2.group1-vs-group2-results.csv'], 'output': ['s3://hubseq-data/test/rnaseq/run_test1/david_go/'],  'alternate_inputs': [], 'alternate_outputs': [], 'program_arguments': '', 'sample_id': MODULE+'_test', 'dryrun': ''}
+io_json = {'input': ['s3://hubseq-data/test/rnaseq/run_test1/deseq2/deseq2.group1-vs-group2-results.csv'], 'output': ['s3://hubseq-data/test/rnaseq/run_test1/david_go/'],  'alternate_inputs': [], 'alternate_outputs': [], 'program_arguments': '-cond pvalue<0.5,log2FoldChange>0.5', 'sample_id': MODULE+'_test'}
 
 with open(MODULE+'.dryrun_test.io.json','w') as fout:
     json.dump(io_dryrun_json, fout)

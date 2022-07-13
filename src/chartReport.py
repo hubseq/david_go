@@ -19,12 +19,34 @@ import pandas as pd
 sys.path.append('/global_utils/src/')
 import module_utils
 
-def chartReport( arg_list ):
+def isType( v ):
+        """ Checks type of variable v. Eventually move this to utils()
+        """
+        try:
+                tmp = int(v)
+                return 'int'
+        except:
+                try:
+                        tmp = float(v)
+                        return 'float'
+                except:
+                        return 'str'
 
+                
+def chartReport( arg_list ):
+        """ Creates signifcant GO terms output given list of gene_ids. 
+        Can also pass conditions for which gene_ids to use, based on values in other columns.
+        -i input_files
+        -o output_dir
+        -cond conditionals - e.g., pvalue<0.05,log2FoldChange>1
+              valid conditionals: <, >, <=, >=, ==, !=
+        -name analysis_name
+        """        
         print('ARG LIST: {}'.format(str(arg_list)))
         input_args = module_utils.getArgument( arg_list, '-i', 'list' )
         output_dir = module_utils.getArgument( arg_list, '-o', 'list' )
         go_analysis_name = module_utils.getArgument( arg_list, '-name' )
+        conditionals = module_utils.getArgument( arg_list, '-cond', 'implicit', '' )        
         if output_dir != []:
 	        os.chdir( output_dir[0] )
         if input_args == []:
@@ -35,7 +57,54 @@ def chartReport( arg_list ):
         else:
                 df = pd.read_csv( input_args[0], sep='\t')
         df.dropna(inplace=True)
-        
+
+        # reduce dataframe based on conditionals if provided
+        operators = ['<','>','=','==','<=','>=','!=']
+        if conditionals not in ['', []]:
+                for c in conditionals.split(','):
+                        c = c.lstrip(' ').rstrip(' ')
+                        if '<=' in c:
+                                [col, val] = c.split('<=')
+                                if isType(val) == 'float':
+                                        df = df[df[col]<=float(val)]
+                                elif isType(val) == 'int':
+                                        df = df[df[col]<=int(val)]
+                        elif '>=' in c:
+                                [col, val] = c.split('>=')
+                                if isType(val) == 'float':
+                                        df = df[df[col]>=float(val)]
+                                elif isType(val) == 'int':
+                                        df = df[df[col]>=int(val)]
+                        elif '<' in c:
+                                [col, val] = c.split('<')
+                                if isType(val) == 'float':
+                                        df = df[df[col]<float(val)]
+                                elif isType(val) == 'int':
+                                        df = df[df[col]<int(val)]
+                        elif '>' in c:
+                                [col, val] = c.split('>')
+                                if isType(val) == 'float':
+                                        df = df[df[col]>float(val)]
+                                elif isType(val) == 'int':
+                                        df = df[df[col]>int(val)]
+                        elif '==' in c:
+                                [col, val] = c.split('==')
+                                if isType(val) == 'float':
+                                        df = df[df[col]==float(val)]
+                                elif isType(val) == 'int':
+                                        df = df[df[col]==int(val)]                                        
+                                else:
+                                        df = df[df[col]==val]
+                        elif '!=' in c:
+                                [col, val] = c.split('!=')
+                                if isType(val) == 'float':
+                                        df = df[df[col]!=float(val)]
+                                elif isType(val) == 'int':
+                                        df = df[df[col]!=int(val)]                                        
+                                else:
+                                        df = df[df[col]!=val]                                        
+                        
+                                        
         print('GENE IDS: {}'.format(str(list(df['gene_id']))))
         inputIds = ','.join(list(df['gene_id'])) if 'gene_id' in list(df.columns) else ''
         
